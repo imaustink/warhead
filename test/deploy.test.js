@@ -1,7 +1,6 @@
 import test from 'ava'
 import path from 'path'
 import rewire from 'rewire'
-import helpers from './test-helpers'
 
 const deploy = rewire('../lib/deploy')
 const serviceName = 'my-service'
