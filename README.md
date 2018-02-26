@@ -1,4 +1,8 @@
 # warhead
+[![npm version](https://badge.fury.io/js/warhead.svg)](https://www.npmjs.com/package/warhead)
+[![Build Status](https://travis-ci.org/imaustink/warhead.svg?branch=master)](https://travis-ci.org/imaustink/warhead)
+[![Coverage Status](https://coveralls.io/repos/github/imaustink/warhead/badge.svg?branch=master)](https://coveralls.io/github/imaustink/warhead?branch=master)
+[![Greenkeeper badge](https://badges.greenkeeper.io/imaustink/warhead.svg)](https://greenkeeper.io/)
 
 The warhead project is a set of tools for building microservices atop Functions as a Service (FaaS) platforms.
 
