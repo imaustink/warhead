@@ -21,7 +21,7 @@ test.after(() => {
 })
 
 test.serial('create a new lambda function', t => {
-  const settings = { foo: 'bar' }
+  const settings = { foo: 'bar', region: 'foo' }
   const servicePackage = {
     description: 'My awesome service',
     warhead: {
@@ -69,7 +69,10 @@ test.serial('update an existing lambda function', t => {
   const servicePackage = {
     description: 'My awesome service',
     warhead: {
-      hash
+      hash,
+      settings: {
+        region: 'foo'
+      }
     }
   }
 
@@ -95,5 +98,37 @@ test.serial('update an existing lambda function', t => {
   }).then(() => {
     teardownLambda()
     teardownWriteFile()
+  })
+})
+
+test.serial('Lambda constructor is passed a region', t => {
+  const expectedRegion = 'us-east-1'
+  const teardownWriteFile = helpers.stub(fs, 'writeFile', () => {})
+  const teardownLambda = helpers.stub(AWS, 'Lambda', helpers.createLambdaMock({
+    createFunction (options) {
+      return {
+        promise () {
+          return Promise.resolve({ CodeSha256: '' })
+        }
+      }
+    }
+  }))
+  const tearDownConfig = helpers.stub(AWS, 'config.update', ({region}) => {
+    t.is(expectedRegion, region)
+  })
+
+  return publishers.lambda({
+    servicePath,
+    servicePackage: {
+      warhead: {
+        settings: {
+          region: expectedRegion
+        }
+      }
+    }
+  }).then(() => {
+    teardownWriteFile()
+    teardownLambda()
+    tearDownConfig()
   })
 })
