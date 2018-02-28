@@ -21,7 +21,7 @@ test.after(() => {
 })
 
 test.serial('create a new lambda function', t => {
-  const settings = { foo: 'bar', region: 'foo' }
+  const settings = { foo: 'bar' }
   const servicePackage = {
     description: 'My awesome service',
     warhead: {
