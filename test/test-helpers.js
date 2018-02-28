@@ -30,14 +30,24 @@ module.exports = {
   },
   stub (object, property, stub) {
     let original
-    if (property) {
-      original = object[property]
-    } else {
-      original = object
+    let copy = object
+    let path = property.split('.')
+    for (let i = 0; i < path.length; i++) {
+      if (i === path.length - 1) {
+        original = copy[path[i]]
+        copy[path[i]] = stub
+      }
+      copy = copy[path[i]]
     }
-    object[property] = stub
     return function teardown () {
-      object[property] = original
+      let copy = object
+      for (let i = 0; i < path.length; i++) {
+        if (i === path.length - 1) {
+          copy[path[i]] = original
+          break
+        }
+        copy = copy[path[i]]
+      }
     }
   },
   ArchiverMock

@@ -36,7 +36,7 @@ Commands:
 
 ## Adapters
 
-[AWS Lambda](https://github.com/imaustink/warhead-lambda)
-GCP Functions - not yet implemented
-Azure Functions - not yet implemented
-Firebase Functions - not yet implemented
+- [AWS Lambda](https://github.com/imaustink/warhead-lambda)
+- GCP Functions - not yet implemented
+- Azure Functions - not yet implemented
+- Firebase Functions - not yet implemented
