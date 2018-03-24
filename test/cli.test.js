@@ -1,34 +1,35 @@
-import test from 'ava'
-import { Command } from 'commander'
-import cli from '../lib'
+const test = require('ava')
+const { Command } = require('commander')
+const sinon = require('sinon')
+const cli = require('../lib')
+const path = require('path')
 
 function makeArgv (str) {
   return [process.argv[0], 'warhead', ...str.split(' ')]
 }
 
-function Mock () {
+function Mock ({ services } = {}) {
   const program = new Command()
   program.help = () => {
     this.helpCalled = true
   }
-  this.registeredGenerators = []
   this.yeomanEnv = {
-    run: (generator, options, callback) => {
-      this.executedGenerator = generator
-      callback()
-    },
-    register: generator => {
-      this.registeredGenerators.push(generator)
-    }
+    run: sinon.spy((generator, options, callback) => callback()),
+    register: sinon.spy(() => {})
   }
-  this.testRunner = service => {
-    this.testedService = service
+  this.testRunner = sinon.spy(() => Promise.resolve())
+  this.deploy = sinon.spy(service => {
     return Promise.resolve()
+  })
+  this.installer = {
+    install: sinon.spy(() => Promise.resolve())
   }
-  this.deploy = service => {
-    this.deployedService = service
-    return Promise.resolve()
-  }
+  this.getAllServiceNames = sinon.spy((promise = new Promise()) => {
+    return Promise.all((services || []).map(serviceName => {
+      return promise(serviceName)
+    }))
+  })
+
   this.program = program
 }
 
@@ -36,7 +37,7 @@ test('run project generator', t => {
   const mock = new Mock()
 
   return cli(makeArgv('generate project'), mock).then(() => {
-    t.is(mock.executedGenerator, 'warhead:project')
+    t.is(mock.yeomanEnv.run.args[0][0], 'warhead:project')
   })
 })
 
@@ -44,7 +45,7 @@ test('run service generator', t => {
   const mock = new Mock()
 
   return cli(makeArgv('generate service'), mock).then(() => {
-    t.is(mock.executedGenerator, 'warhead:service')
+    t.is(mock.yeomanEnv.run.args[0][0], 'warhead:service')
   })
 })
 
@@ -73,15 +74,18 @@ test('run test on service', t => {
   const service = 'my-service'
 
   return cli(makeArgv(`test ${service}`), mock).then(() => {
-    t.is(mock.testedService, service)
+    t.is(mock.testRunner.args[0][0], service)
   })
 })
 
 test('run test with missing name', t => {
-  const mock = new Mock()
-
+  const services = ['foo', 'bar']
+  const mock = new Mock({services})
   return cli(makeArgv('test'), mock).then(() => {
-    t.true(mock.helpCalled)
+    services.forEach((serviceName, i) => {
+      const args = mock.testRunner.args[i]
+      t.deepEqual(args[0], serviceName)
+    })
   })
 })
 
@@ -90,8 +94,8 @@ test('run deploy on service', t => {
   const service = 'my-service'
 
   return cli(makeArgv(`deploy ${service}`), mock).then(() => {
-    t.is(mock.testedService, service)
-    t.is(mock.deployedService, service)
+    t.is(mock.testRunner.args[0][0], service)
+    t.is(mock.deploy.args[0][0], service)
   })
 })
 
@@ -116,5 +120,34 @@ test('run with no arguments', t => {
 
   return cli(['', ''], mock).then(() => {
     t.true(mock.helpCalled)
+  })
+})
+
+test('run install on service', t => {
+  const mock = new Mock()
+  const serviceName = 'some-package'
+  const installPkgs = ['foo', 'bar', 'baz', 'qux']
+
+  return cli(makeArgv(`install ${serviceName} ${installPkgs.join(' ')}`), mock).then(() => {
+    t.deepEqual(mock.installer.install.args[0][0], installPkgs)
+    t.deepEqual(mock.installer.install.args[0][1], {
+      cwd: `services/${serviceName}/service/`,
+      stdio: 'inherit'
+    })
+  })
+})
+
+test('run install missing service name', t => {
+  const services = ['foo', 'bar']
+  const mock = new Mock({services})
+  return cli(makeArgv('install'), mock).then(() => {
+    services.forEach((serviceName, i) => {
+      const args = mock.installer.install.args[i]
+      t.deepEqual(args[0], [])
+      t.deepEqual(args[1], {
+        cwd: path.join('services', serviceName, 'service/'),
+        stdio: 'inherit'
+      })
+    })
   })
 })
