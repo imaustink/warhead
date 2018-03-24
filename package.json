@@ -12,7 +12,6 @@
     "warhead": "./bin/warhead.js"
   },
   "scripts": {
-    "version": "git commit -am \"Updating version\"",
     "publish": "git push origin --tags && git push origin",
     "release:pre": "npm version prerelease && npm publish --tag pre",
     "release:patch": "npm version patch && npm publish",
