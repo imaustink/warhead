@@ -14,7 +14,8 @@
   "scripts": {
     "preversion": "npm test",
     "version": "git checkout -b release",
-    "postversion": "git push --tags && git push && git checkout - && git branch -D release",
+    "postversion": "git push --tags && git push",
+    "postpublish": "git checkout - && git branch -D release",
     "release:pre": "npm version prerelease && npm publish --tag pre",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
