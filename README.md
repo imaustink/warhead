@@ -16,22 +16,20 @@ Currently, warhead supports AWS Lambda, but the goal is to support as many platf
 The CLI will help you scaffold projects and their subsequent services, as well as test and deploy them.
 
 ```
-Usage: warhead generate [type]
+  Usage: warhead generate [type]
 
-Options:
+  Options:
+    -V, --version  output the version number
+    -h, --help     output usage information
 
-  -V, --version  output the version number
-  -h, --help     output usage information
-
-
-Commands:
-
-  generate|g [type]  Run a generator. Type can be
-    • project - Create a new warhead project in a subdirectory
-    • service - Create a new warhead service in the current project
-  
-  test|t [name]      Run test for a service.
-  deploy|d [name]    Deploy a service
+  Commands:
+    generate|g [type]                                  Run a generator. Type can be
+    	• project - Create a new warhead project in a subdirectory
+    	• service - Create a new warhead service in the current project
+    test|t [name]                                      Run test for a service.
+    deploy|d [name]                                    Deploy a service
+    install|i [options] [serviceName] [package(s)...]  Install package(s) in a service
+    *
 ```
 
 ## Adapters
