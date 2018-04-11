@@ -1,6 +1,6 @@
 {
   "name": "warhead",
-  "version": "0.0.0-alpha.3",
+  "version": "0.0.0-alpha.4",
   "description": "An AWS Lambda adapter for warhead",
   "main": "lib/",
   "directories": {
