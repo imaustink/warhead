@@ -3,5 +3,6 @@ node_js:
   - "4.3.2"
   - "6.10.3"
   - "8.10"
+  - "10"
   # This blows up the linter in CI :( - "lts/*"
 script: npm run ci
