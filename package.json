@@ -82,7 +82,7 @@
     "commander": "^2.14.1",
     "stream-to-array": "^2.3.0",
     "then-fs": "^2.0.0",
-    "update-notifier": "^2.3.0",
+    "update-notifier": "^3.0.0",
     "warhead-generator": "0.0.0-alpha.5",
     "yeoman-environment": "^2.0.5"
   }
